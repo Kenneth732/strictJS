@@ -1,3 +1,5 @@
+
+
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,11 +22,14 @@ export default async function strictInit() {
     // Node.js environment
     const wasmPath = path.resolve(__dirname, "pkg/strictjs_runtime_bg.wasm");
     const wasmBuffer = fs.readFileSync(wasmPath);
-    await initWasm(wasmBuffer);
+
+    await initWasm({ module: wasmBuffer }); // ✅ Updated way
   } else {
     // Browser environment
-    await initWasm();
+    const wasmUrl = new URL("./pkg/strictjs_runtime_bg.wasm", import.meta.url);
+    await initWasm({ module: fetch(wasmUrl) }); // ✅ Updated way
   }
+
 
   return {
     get_memory,
@@ -44,3 +49,5 @@ export {
   StrictFunction,
   StrictObject
 };
+
+
