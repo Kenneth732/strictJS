@@ -66,30 +66,86 @@ Or load directly from a **CDN** in the browser:
 Here's a minimal example showing how to initialize StrictJS Runtime and work with strict arrays.
 
 ```js
-import init, { HeapType, StrictArray, StrictFunction } from "strictjs-runtime/pkg/strictjs_runtime.js";
 
-async function main() {
-  await init(); // Initialize the WebAssembly runtime
 
-  // Create a strict typed array
-  const numbers = new StrictArray(HeapType.U8, 3);
-  numbers.set(0, 42);
-  numbers.set(1, 99);
+// demo.js
+import strictInit from "strictjs-runtime";
 
-  console.log("First number:", numbers.get(0)); // → 42
-  console.log("Second number:", numbers.get(1)); // → 99
+const run = async () => {
+  const { StrictObject, StrictFunction, HeapType } = await strictInit({});
 
-  // Wrap a JS function with type safety
-  const safeAdd = new StrictFunction(
-    (a, b) => a + b,
-    ["u8", "u8"], // Input types
-    "u8"          // Output type
+  console.log("=== StrictJS Demo ===\n");
+
+  // ======= Test 1: Basic Object with Schema =======
+  const userSchema = {
+    id: "u32",
+    name: "string",
+    age: "u8",
+    isActive: "bool",
+    balance: "f64"
+  };
+
+  const user = new StrictObject(userSchema);
+  user.setField("id", 1234567890);
+  user.setField("name", "Alice Johnson");
+  user.setField("age", 28);
+  user.setField("isActive", true);
+  user.setField("balance", 999.99);
+
+  console.log("ID:", user.getFieldAsNumber("id"));
+  console.log("Name:", user.getFieldAsString("name"));
+  console.log("Age:", user.getFieldAsNumber("age"));
+  console.log("Active:", user.getFieldAsBoolean("isActive"));
+  console.log("Balance:", user.getFieldAsNumber("balance"));
+
+  // ======= Test 2: Nested Objects =======
+  const productSchema = {
+    id: "u32",
+    name: "string",
+    metadata: {
+      category: "string",
+      tags: {
+        featured: "bool",
+        newArrival: "bool"
+      }
+    }
+  };
+
+  const product = new StrictObject(productSchema);
+  product.setField("metadata", {
+    category: "Electronics",
+    tags: { featured: true, newArrival: false }
+  });
+
+  const metadata = product.getNestedObject("metadata");
+  const tags = metadata.getNestedObject("tags");
+
+  console.log("\nProduct Category:", metadata.getFieldAsString("category"));
+  console.log("Featured:", tags.getFieldAsBoolean("featured"));
+  console.log("New Arrival:", tags.getFieldAsBoolean("newArrival"));
+
+  // ======= Test 3: WebAssembly-backed StrictFunction =======
+  const addU8 = new StrictFunction(
+    new Function("a", "b", "return a + b;"),
+    ["u8", "u8"],
+    "u8"
   );
 
-  console.log("200 + 100 =", safeAdd.call([200, 100])); // → 255 (clamped)
-}
+  console.log("\nStrictFunction Add Result (u8 overflow demo):", addU8.call([200, 56]));
 
-main();
+  const multiplyU16 = new StrictFunction(
+    new Function("x", "y", "return x * y;"),
+    ["u16", "u16"],
+    "u16"
+  );
+
+  console.log("StrictFunction Multiply Result:", multiplyU16.call([300, 300]));
+};
+
+run().catch(console.error);
+
+
+
 ```
 
 ---
