@@ -1,8 +1,6 @@
-
-
 {
   "name": "strictjs-runtime",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A lightweight low-level runtime for StrictJS with WebAssembly support.",
   "main": "index.js",
   "type": "module",
@@ -34,5 +32,3 @@
   "homepage": "https://github.com/Kenneth732/strictJS.git",
   "license": "MIT"
 }
-
-
