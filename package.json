@@ -1,6 +1,6 @@
 {
   "name": "strictjs-runtime",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A lightweight low-level runtime for StrictJS with WebAssembly support.",
   "main": "index.js",
   "type": "module",
