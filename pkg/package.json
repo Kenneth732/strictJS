@@ -1,0 +1,24 @@
+{
+  "name": "strictjs-runtime",
+  "type": "module",
+  "collaborators": [
+    "Your Name kennethmburu21@gmail.com"
+  ],
+  "description": "Type-safe JavaScript runtime with WebAssembly - Bringing Rust's safety guarantees to JavaScript",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/strictjs-runtime"
+  },
+  "files": [
+    "strictjs_runtime_bg.wasm",
+    "strictjs_runtime.js",
+    "strictjs_runtime.d.ts"
+  ],
+  "main": "strictjs_runtime.js",
+  "types": "strictjs_runtime.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
