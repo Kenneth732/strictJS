@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import initWASM, {
   StrictNumber,
   StrictString,
@@ -13,21 +10,33 @@ import initWASM, {
   Schema
 } from "./pkg/strictjs_runtime.js";
 
-// Handle __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let nodeInitWASM = null;
+
+// Only import `fs` and `path` in Node environment
+if (typeof window === "undefined") {
+  const fs = await import("fs");
+  const path = await import("path");
+  const { fileURLToPath } = await import("url");
+
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  nodeInitWASM = async () => {
+    const wasmPath = path.resolve(__dirname, "pkg/strictjs_runtime_bg.wasm");
+    const wasmBuffer = fs.readFileSync(wasmPath);
+    await initWASM(wasmBuffer);
+  };
+}
 
 /**
  * Initializes StrictJS Runtime
- * - Works in both Node.js and browser
- * - Automatically detects environment and loads WASM correctly
+ * - Node: Loads WASM from filesystem
+ * - Browser: WASM auto-fetch
  */
 export default async function strictInit() {
   if (typeof window === "undefined") {
     // Node.js environment
-    const wasmPath = path.resolve(__dirname, "pkg/strictjs_runtime_bg.wasm");
-    const wasmBuffer = fs.readFileSync(wasmPath);
-    await initWASM(wasmBuffer);
+    await nodeInitWASM();
   } else {
     // Browser environment
     await initWASM();
@@ -46,7 +55,7 @@ export default async function strictInit() {
   };
 }
 
-// Named exports for direct imports
+// Named exports
 export {
   get_memory,
   HeapType,
