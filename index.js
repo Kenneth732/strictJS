@@ -12,8 +12,10 @@ import initWASM, {
 
 let nodeInitWASM = null;
 
-// Only import `fs` and `path` in Node environment
-if (typeof window === "undefined") {
+/**
+ * This function dynamically loads WASM in Node.js
+ */
+async function setupNodeLoader() {
   const fs = await import("fs");
   const path = await import("path");
   const { fileURLToPath } = await import("url");
@@ -21,11 +23,16 @@ if (typeof window === "undefined") {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
 
-  nodeInitWASM = async () => {
+  return async () => {
     const wasmPath = path.resolve(__dirname, "pkg/strictjs_runtime_bg.wasm");
     const wasmBuffer = fs.readFileSync(wasmPath);
     await initWASM(wasmBuffer);
   };
+}
+
+// Lazy initialize Node loader if in Node.js environment
+if (typeof window === "undefined") {
+  nodeInitWASM = await setupNodeLoader();
 }
 
 /**
@@ -35,11 +42,9 @@ if (typeof window === "undefined") {
  */
 export default async function strictInit() {
   if (typeof window === "undefined") {
-    // Node.js environment
     await nodeInitWASM();
   } else {
-    // Browser environment
-    await initWASM();
+    await initWASM(); // Browser automatically fetches the `.wasm` file
   }
 
   return {
