@@ -1,8 +1,12 @@
+
+
 {
   "name": "strictjs-runtime",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A lightweight low-level runtime for StrictJS with WebAssembly support.",
   "main": "index.js",
+  "module": "index.js",
+  "browser": "index.js",
   "type": "module",
   "files": [
     "pkg",
@@ -21,14 +25,16 @@
     "javascript",
     "webassembly"
   ],
-  "author": "Kenneth Mburu kennethmburu21@gmail.com",
+  "author": "Kenneth Mburu <kennethmburu21@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Kenneth732/strictJS.git"
   },
   "bugs": {
-    "url": "https://github.com/Kenneth732/strictJS.git"
+    "url": "https://github.com/Kenneth732/strictJS/issues"
   },
-  "homepage": "https://github.com/Kenneth732/strictJS.git",
+  "homepage": "https://github.com/Kenneth732/strictJS",
   "license": "MIT"
 }
+
+
