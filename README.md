@@ -652,3 +652,4 @@ StrictJS draws inspiration from:
 **Made with ❤️ by Kenneth Mburu and contributors**
 
 *"Wherever JavaScript runs, StrictJS can run too."*
+
